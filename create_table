@@ -1,0 +1,84 @@
+#!/bin/bash
+while true
+do
+fNames=""
+fDataTypes=""
+
+read -p "Please enter number of fields: " NOfFields
+if [[ $NOfFields =~ ^[1-9]+$ ]]
+then
+
+		#start accepting fields and datatypes
+		for ((i = 1; i <= "$NOfFields"; i++)); 	
+		do
+			read -p "Enter the name of field  noting that 1st column is PK $i: " fieldName
+
+			fieldName="${fieldName//,/_}"  ##to avoid , in string
+
+			if [[ $fNames == *"$fieldName"* ]]; 
+        		then
+            			echo "Error input : field is exist! or empty value"
+            			i=$i-1
+            			continue;
+        		fi
+
+			if [[ $i == "$NOfFields" ]]; 
+        		then
+            			#fNames+="$fieldName"
+            			read -rp "data type :
+                    		1) Integer 2) String " fieldDT
+
+				case $fieldDT in
+	    			1) fieldDT="int" 
+               			fDataTypes+="$fieldDT"
+	    			fNames+="$fieldName"
+				;;
+            			2) fieldDT="string" 
+	       			fDataTypes+="$fieldDT"
+				fNames+="$fieldName"
+            			;;
+            			*) echo "invalid column data type "
+	       			i=$i-1
+            			;;
+	    			esac
+			else
+            			#fNames+="$fieldName,"
+            			read -rp "data type :
+                    		1) Integer 2) String " fieldDT
+	    			fieldDT="${fieldDT//,/_}"  ##to avoid , in input
+
+	    			case $fieldDT in
+	   			1) fieldDT="int" 
+	       			fDataTypes+="$fieldDT,"
+            			fNames+="$fieldName,"
+				;;
+            			2) fieldDT="string" 
+              			fDataTypes+="$fieldDT,"
+	     			fNames+="$fieldName,"
+				;;
+            			*)
+				echo "invalid column data type "
+                		i=$i-1
+                		 ;;
+            			esac
+
+        		fi
+     	done
+
+
+	echo "$fNames" >"$table"
+        echo "$fDataTypes" >> "$table"
+	echo -e "$table table successfully created with columns and it data types\n\n"
+	exit
+
+
+
+
+else
+echo "invalid value"
+fi
+done
+
+
+
+

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+while true
+do
+read -p "Enter table name to be dropped press q to go back " table
+
+if [[ $table == "q" ]]
+then exit
+fi
+
+if [[ $table =~ ^[_A-Za-z]+[A-Za-z0-9]+$ ]]
+then
+
+        if [ -f "$table" ]
+        then
+	rm  "$table"
+        echo -e "$table  deleted successfully \n"
+        else
+	echo -e "$table   not exist \n"
+        fi
+else echo -e "incorrect naming \n"
+fi
+done
+
+

@@ -1,0 +1,119 @@
+#/usr/bin/bash
+
+#cd dbs/social
+
+read -p "enter your table name : " tableName
+
+until [[ -f $tableName ]]
+do
+	echo "the table is not found "
+	read -p "enter your table name again : " tableName
+done
+
+echo -e "field names and datatype of $tableName table are : "
+sed -n '1,2p' "$tableName"
+
+values=""
+#awk –F, 'NR==1 {print $NF}' $tableName
+#numberOfFields=$(awk –F, 'NR==1 {print NF}' $tableName)
+numberOfFields=$(awk -F, 'NR==1 {print NF}' $tableName)
+
+for ((i = 1; i <= "$numberOfFields"; i++)); 
+do
+
+	fieldValue=$(awk -F, -v i="$i" 'NR==1 {print $i}' $tableName)
+	fieldType=$(awk -F, -v i="$i" 'NR==2 {print $i}' $tableName)
+
+	read -p "enter value of $fieldValue with type $fieldType : " value
+#####################################check duplicated id #####################
+x=0
+if [ $i == "1" ]
+then
+echo="value test"
+declare  -a pk=(`cut -f1 -d, $tableName |sed 's/,/\t/g'`)
+for ((j=0 ; j< `echo ${#pk[@]}` ; j++ ))
+                do
+                       if [ $value == "${pk[j]}" ]
+                        then
+                            echo "ERROR : duplicated id value"
+                            let i=$i-1
+			    let x=$x+1	
+                            break
+
+                        fi
+done
+fi
+
+if [ $x == "1" ]
+then
+x=0
+echo "choose another value" 
+continue
+fi
+
+####################################################
+
+
+	case $fieldType in
+		"string")
+
+		        while [[ $value =~ ['!''?'@\#\%^\&*()-$+\.\/';'] ]];
+			do
+					echo "the value you entered doesnt match rules !"
+					echo "enter value of $fieldValue "
+					read -p "with type $fieldType : " value
+			done
+			;;
+		"int")
+			re='^[0-9]+$'
+			until [[ $value =~ $re ]];
+			do
+				echo "field accepts only integer data type !"
+				echo "enter value of $fieldValue "
+				read -p "with type $fieldType : " value
+			done
+			;;
+	esac
+	
+	if [[ $i == 0 ]]; 
+        then
+            values="$value,"
+            
+	elif [[ $i == "$numberOfFields" ]]; 
+        then
+            values+="$value"
+         
+        else
+            values+="$value,"
+        fi
+
+done
+echo "done"
+echo "$values" >> "$tableName"
+exit
+
+
+
+
+
+
+
+<<comment
+if [ $i == "1" ]
+then
+echo="value test"
+declare  -a pk=(`cut -f1 -d, $table |sed 's/,/\t/g'`)
+
+ for ((j=0 ; j< `echo ${#pk[@]}` ; j++ ))
+                do
+                       if [ $value == "${pk[j]}" ]
+                        then
+                            echo "ERROR : duplicated id value"
+                            let i=$i+1
+                                continue 2
+
+                        fi
+done
+fi
+comment
+

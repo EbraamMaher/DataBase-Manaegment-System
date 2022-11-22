@@ -1,0 +1,94 @@
+#!/bin/bash
+
+#cd dbs/test
+
+
+while true
+do
+read -p  "Select one numeric option from below
+1) Create Table
+2) List Available Tables
+3) Drop Table
+4) Insert Into Table
+5) Select From Table
+6) Delete From Table
+7) Update table
+8) Disconnect from current DB    " option
+
+		#######
+
+case $option in
+		####### create table #####
+
+1)
+
+while true
+do
+  	read -p "Enter table name to be created or press q to go back: " table
+       
+	 #to quit creation
+        if [[ $table == "q" ]]
+        then exit
+        fi
+
+	if [[ $table =~ ^[_A-Za-z]+[A-Za-z0-9]+$ ]]
+        then
+	        #check table existence
+                if [ -f "$table" ]
+                then
+                echo "$table  already exists exists"
+                else
+                touch $table;
+                echo "$table successfully created"
+                break
+		fi
+	else
+	echo "error naming"
+	fi
+
+done
+export table
+./../../create_table
+
+
+  ;;
+		########List Available Tables#########
+
+2)
+echo -e "\n"
+ls $PWD
+echo -e "\n"
+    ;;
+		########Drop Table#########
+
+
+3)
+./../../drop_table
+
+    ;;
+		 ########Insert Into Table#########
+4)
+   ./../../insert_into_table
+    ;;
+		#########Select From Table########
+5)
+    ./../../select_from_table
+    ;;
+		#########Delete From Table########
+6)
+	./../../delete_from_table
+    ;;
+		#########update table#######
+
+7) ./../../update_table
+    ;;
+8)
+exit
+./table_menu  ;;
+
+*)
+    echo -e "You Have Entered a wrong value, \n"
+
+    ;;
+esac
+done

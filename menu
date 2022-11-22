@@ -1,0 +1,114 @@
+#!/bin/bash
+
+#export PS1="ITIDB : "
+
+
+echo -e "Welcome,to DBMS,please select from this list:\n"
+
+one="list_availabel_DBs"
+two="create_new_DB"
+three="delete_DB"
+four="connect_to_DB"
+five="Exit"
+
+export PS3="DBMS > "
+select choice in  $one $two $three $four $five 
+do
+case $choice in
+#####################################################
+$one)
+ls dbs
+;;
+
+###############################################################
+$two)
+
+while true
+do
+
+read -p "Enter DB to be created or press q to go back: " dir
+if [[ $dir == "q" ]]
+then break
+fi
+
+if [[ $dir =~ ^[_A-Za-z]+[A-Za-z0-9]+$ ]]
+then
+
+	if [ -d "dbs/$dir" ]
+	then
+	echo "$dir  already exists exists"
+
+	else
+	#check_name()
+	echo $dir
+	mkdir dbs/$dir
+	echo "successfully created"
+	fi
+else
+echo "inncorrect naming"
+fi
+done
+;;
+##########################################################################################
+$three)
+while true
+do
+read -p "Enter DB name to be deleted press q to go back " dir 
+
+if [[ $dir == "q" ]]
+then break
+fi
+
+if [[ $dir =~ ^[_A-Za-z]+[A-Za-z0-9]+$ ]]
+then
+
+    	if [ -d "dbs/$dir" ]
+        then
+	rm -r "dbs/$dir"
+	echo "$dir  deleted successfully"
+	#break
+	else
+	echo "$dir   not exist"
+	fi
+else echo "incorrect naming"
+fi
+done
+;;
+###########################################################################
+$four)
+
+while true
+do
+read -p "please,Enter DB name to be connected press q to go back  " dir 
+
+if [[ $dir == "q" ]]
+then break
+fi
+
+if [[ $dir =~ ^[_A-Za-z]+[A-Za-z0-9]+$ ]]
+then
+
+        if [ -d "dbs/$dir" ]
+        then
+        echo "successfully connected to $dir"
+	cd dbs/$dir
+	#echo "$PWD"
+        ./../../table_menu $dir
+	cd ../../
+	#break
+	else
+	echo "$dir  not exist"
+        fi
+else echo "incorrect naming"
+fi
+done
+
+#####################################
+;;
+$five)  exit ;;
+####################################
+*) echo "Erro,not a proper selection" ;;
+
+esac
+
+done
